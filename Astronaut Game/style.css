@@ -61,19 +61,23 @@
 /* ====================================================================
    GLOBAL RESETS & ACCESSIBILITY CONSTRAINTS
    ==================================================================== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
+html,
+body {
   min-height: 100vh;
   background-color: var(--bg-page);
   color: var(--text-main);
   font-family: var(--font-ui);
-  font-size: 16px; /* Base body text: minimum 16px */
+  font-size: 16px;
+  /* Base body text: minimum 16px */
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
@@ -82,24 +86,24 @@ body {
   padding: 12px 14px;
   display: flex;
   justify-content: center;
-  background-image: 
-    radial-gradient(1px 1px at 30px 40px, rgba(255,255,255,0.4), transparent),
-    radial-gradient(1.5px 1.5px at 160px 180px, rgba(74,222,128,0.25), transparent),
-    radial-gradient(1px 1px at 320px 90px, rgba(255,255,255,0.3), transparent),
-    radial-gradient(1.5px 1.5px at 510px 240px, rgba(6,182,212,0.2), transparent),
+  background-image:
+    radial-gradient(1px 1px at 30px 40px, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1.5px 1.5px at 160px 180px, rgba(74, 222, 128, 0.25), transparent),
+    radial-gradient(1px 1px at 320px 90px, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1.5px 1.5px at 510px 240px, rgba(6, 182, 212, 0.2), transparent),
     linear-gradient(to bottom, #090e0c, #0b110e);
   background-repeat: repeat;
   background-size: 600px 400px, auto;
 }
 
 /* All buttons: at least 44px tall */
-button, 
-.btn-speed, 
-.btn-top-action, 
-.build-card-btn, 
-.btn-end-day, 
-.btn-orbit-action, 
-.btn-skip-tut, 
+button,
+.btn-speed,
+.btn-top-action,
+.build-card-btn,
+.btn-end-day,
+.btn-orbit-action,
+.btn-skip-tut,
 .btn-emergency-override,
 .custom-select {
   min-height: 44px;
@@ -108,12 +112,21 @@ button,
 }
 
 /* All body text, inputs, labels: at least 16px */
-p, span, label, div, select, input, summary, strong, b {
+p,
+span,
+label,
+div,
+select,
+input,
+summary,
+strong,
+b {
   font-size: 16px;
 }
 
 /* Screen reader only utility */
-.sr-only, .chip-sub-hidden {
+.sr-only,
+.chip-sub-hidden {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -141,10 +154,12 @@ p, span, label, div, select, input, summary, strong, b {
 
 /* Responsive layout for mobile */
 @media (max-width: 768px) {
+
   /* Stack the three‑column layout vertically */
   .game-layout {
     flex-direction: column !important;
   }
+
   /* Panels take full width */
   .panel-build,
   .panel-crew-goals,
@@ -152,31 +167,51 @@ p, span, label, div, select, input, summary, strong, b {
     width: 100% !important;
     max-width: none !important;
   }
+
   /* Reorder panels for better mobile flow */
-  .panel-map { order: 1; flex: 1 1 auto; }
-  .panel-build { order: 2; max-height: 60vh; overflow-y: auto; }
-  .panel-crew-goals { order: 3; max-height: 60vh; overflow-y: auto; }
+  .panel-map {
+    order: 1;
+    flex: 1 1 auto;
+  }
+
+  .panel-build {
+    order: 2;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .panel-crew-goals {
+    order: 3;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
   /* Allow top bar to wrap and shrink */
   .top-bar {
     flex-wrap: wrap;
     gap: 4px;
     padding: 8px;
   }
+
   /* Make resource chips scroll horizontally if needed */
   .top-bar-resources {
     justify-content: flex-start;
     overflow-x: auto;
   }
+
   /* Make canvas responsive – fill width, keep aspect ratio */
   .canvas-wrapper {
     width: 100% !important;
     height: auto !important;
-    aspect-ratio: 16/9; /* fallback ratio */
+    aspect-ratio: 16/9;
+    /* fallback ratio */
   }
+
   canvas#moonCanvas {
     width: 100% !important;
     height: auto !important;
   }
+
   /* Increase touch target size for side panel buttons */
   .btn-top-action,
   .btn-reset-view,
@@ -190,49 +225,6 @@ p, span, label, div, select, input, summary, strong, b {
   }
 }
 
-  /* Stack the three‑column layout vertically */
-  .game-layout {
-    flex-direction: column !important;
-  }
-  /* Panels take full width */
-  .panel-build,
-  .panel-crew-goals,
-  .panel-map {
-    width: 100% !important;
-    max-width: none !important;
-  }
-  /* Allow top bar to wrap and shrink */
-  .top-bar {
-    flex-wrap: wrap;
-    gap: 4px;
-    padding: 8px;
-  }
-  /* Make resource chips scroll horizontally if needed */
-  .top-bar-resources {
-    justify-content: flex-start;
-    overflow-x: auto;
-  }
-  /* Make canvas responsive – fill width, keep aspect ratio */
-  .canvas-wrapper {
-    width: 100% !important;
-    height: auto !important;
-    aspect-ratio: 16/9; /* fallback ratio */
-  }
-  canvas#moonCanvas {
-    width: 100% !important;
-    height: auto !important;
-  }
-  /* Increase touch target size for side panel buttons */
-  .btn-top-action,
-  .btn-reset-view,
-  .custom-select,
-  .btn-end-day,
-  .btn-orbit-action,
-  .btn-skip-tut,
-  .btn-emergency-override {
-    min-height: 48px;
-    font-size: 1rem;
-  }
 }
 
 .app-wrapper {
@@ -351,7 +343,8 @@ p, span, label, div, select, input, summary, strong, b {
   font-size: 16px;
   color: var(--text-muted);
   font-weight: 500;
-  display: none; /* Hidden on desktop for compact bar; icon + value is enough */
+  display: none;
+  /* Hidden on desktop for compact bar; icon + value is enough */
 }
 
 .chip-val {
@@ -377,13 +370,23 @@ p, span, label, div, select, input, summary, strong, b {
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 0.8; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.15); }
+
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
 }
 
 .chip-power {
   border-color: rgba(245, 158, 11, 0.35);
 }
+
 .chip-power .chip-icon {
   color: var(--amber-solar);
 }
@@ -391,6 +394,7 @@ p, span, label, div, select, input, summary, strong, b {
 .chip-air {
   border-color: rgba(6, 182, 212, 0.35);
 }
+
 .chip-air .chip-icon {
   color: var(--cyan-air);
 }
@@ -398,6 +402,7 @@ p, span, label, div, select, input, summary, strong, b {
 .chip-health {
   border-color: rgba(239, 68, 68, 0.35);
 }
+
 .chip-health .chip-icon {
   color: var(--red-health);
 }
@@ -405,6 +410,7 @@ p, span, label, div, select, input, summary, strong, b {
 .chip-supplies {
   border-color: rgba(234, 179, 8, 0.35);
 }
+
 .chip-supplies .chip-icon {
   color: var(--gold-supplies);
 }
@@ -412,6 +418,7 @@ p, span, label, div, select, input, summary, strong, b {
 .chip-science {
   border-color: rgba(168, 85, 247, 0.35);
 }
+
 .chip-science .chip-icon {
   color: var(--purple-science);
 }
@@ -564,13 +571,16 @@ p, span, label, div, select, input, summary, strong, b {
 }
 
 @keyframes storm-card-pulse {
-  0%, 100% { 
-    border-color: rgba(239, 68, 68, 0.6); 
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 12px rgba(239, 68, 68, 0.25); 
+
+  0%,
+  100% {
+    border-color: rgba(239, 68, 68, 0.6);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 12px rgba(239, 68, 68, 0.25);
   }
-  50% { 
-    border-color: rgba(239, 68, 68, 1); 
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 22px rgba(239, 68, 68, 0.5); 
+
+  50% {
+    border-color: rgba(239, 68, 68, 1);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 22px rgba(239, 68, 68, 0.5);
   }
 }
 
@@ -718,8 +728,13 @@ p, span, label, div, select, input, summary, strong, b {
 }
 
 @keyframes storm-pulse {
-  from { border-color: rgba(239, 68, 68, 0.5); }
-  to { border-color: rgba(239, 68, 68, 1); }
+  from {
+    border-color: rgba(239, 68, 68, 0.5);
+  }
+
+  to {
+    border-color: rgba(239, 68, 68, 1);
+  }
 }
 
 /* Tutorial Banner */
@@ -1263,8 +1278,15 @@ p, span, label, div, select, input, summary, strong, b {
 }
 
 @keyframes inspect-appear {
-  from { opacity: 0; transform: translateY(-6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .inspect-card-section.hid {
@@ -2082,7 +2104,8 @@ p, span, label, div, select, input, summary, strong, b {
 @media (max-width: 1024px) {
   body {
     padding: 8px 10px;
-    padding-bottom: 110px; /* Space for the bottom build bar */
+    padding-bottom: 110px;
+    /* Space for the bottom build bar */
   }
 
   .nav-mobile-pill {
@@ -2131,7 +2154,8 @@ p, span, label, div, select, input, summary, strong, b {
   }
 
   .panel-build .panel-header {
-    display: none; /* Keep clean in bottom bar */
+    display: none;
+    /* Keep clean in bottom bar */
   }
 
   .panel-build .dock-instruction {
@@ -2181,6 +2205,7 @@ p, span, label, div, select, input, summary, strong, b {
     align-items: stretch;
     gap: 12px;
   }
+
   .warning-card-right {
     min-width: 100%;
   }
@@ -2205,7 +2230,8 @@ p, span, label, div, select, input, summary, strong, b {
   }
 
   .chip-label {
-    display: inline; /* Show labels on mobile since there's vertical space */
+    display: inline;
+    /* Show labels on mobile since there's vertical space */
   }
 
   .res-chip {
@@ -2256,10 +2282,12 @@ p, span, label, div, select, input, summary, strong, b {
     opacity: 0;
     transform: translate(-50%, 0) scale(0.85);
   }
+
   20% {
     opacity: 1;
     transform: translate(-50%, -6px) scale(1.1);
   }
+
   100% {
     opacity: 0;
     transform: translate(-50%, -24px) scale(1);
@@ -2304,25 +2332,37 @@ p, span, label, div, select, input, summary, strong, b {
 }
 
 @keyframes chip-flash-green {
-  0% { transform: scale(1); }
-  50% { 
-    transform: scale(1.08); 
-    background-color: rgba(34, 197, 94, 0.35); 
-    border-color: #4ade80; 
-    box-shadow: 0 0 12px rgba(74, 222, 128, 0.5); 
+  0% {
+    transform: scale(1);
   }
-  100% { transform: scale(1); }
+
+  50% {
+    transform: scale(1.08);
+    background-color: rgba(34, 197, 94, 0.35);
+    border-color: #4ade80;
+    box-shadow: 0 0 12px rgba(74, 222, 128, 0.5);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes chip-flash-red {
-  0% { transform: scale(1); }
-  50% { 
-    transform: scale(1.08); 
-    background-color: rgba(239, 68, 68, 0.35); 
-    border-color: #f87171; 
-    box-shadow: 0 0 12px rgba(239, 68, 68, 0.5); 
+  0% {
+    transform: scale(1);
   }
-  100% { transform: scale(1); }
+
+  50% {
+    transform: scale(1.08);
+    background-color: rgba(239, 68, 68, 0.35);
+    border-color: #f87171;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* 3. Toast Notifications (Entrance: 250ms < 400ms) */
@@ -2364,6 +2404,7 @@ p, span, label, div, select, input, summary, strong, b {
     opacity: 0;
     transform: translateY(16px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -2396,24 +2437,67 @@ p, span, label, div, select, input, summary, strong, b {
 
 /* 4. Accessibility: Reduced Motion (Disables animations / transitions) */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+
   .floating-stat {
     animation: none !important;
     opacity: 1 !important;
   }
+
   .res-chip.stat-flash-inc,
   .res-chip.stat-flash-dec {
     animation: none !important;
   }
+
   .toast-card {
     animation: none !important;
     transition: none !important;
   }
+
   .goal-progress-fill {
     transition: none !important;
   }
+}
+
+/* Watermark overlay */
+.watermark {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.04;
+  font-size: 14px;
+  color: var(--text-main);
+  transform: rotate(-30deg);
+  z-index: 9999;
+}
+
+/* Watermark overlay */
+.watermark {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.04;
+  font-size: 14px;
+  color: var(--text-main);
+  transform: rotate(-30deg);
+  z-index: 9999;
 }
