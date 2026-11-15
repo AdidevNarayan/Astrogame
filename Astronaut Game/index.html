@@ -1,347 +1,886 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Moon Base Keeper — Junior Astronaut Mission Trainer</title>
-<!-- Google Fonts (High-End Game Fonts) -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Orbitron:wght@700;800;900&family=Rajdhani:wght@600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<!-- Lucide Icons -->
-<script src="https://unpkg.com/lucide@latest"></script>
-<!-- External Stylesheet -->
-<link rel="stylesheet" href="./style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Moon Base Keeper — Junior Astronaut Mission Trainer</title>
+  <!-- Google Fonts (High-End Game Fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Orbitron:wght@700;800;900&family=Rajdhani:wght@600;700&family=Share+Tech+Mono&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- External Stylesheet -->
+  <link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
 
-<div class="app-wrapper">
+  <div class="app-wrapper">
 
-  <!-- TOP NAV & DAY BADGE -->
-  <header class="top-nav">
-    <div class="brand-title">
-      <i data-lucide="moon" style="width:24px; height:24px; color:var(--cyan-bright);"></i>
-      <span>MOON BASE KEEPER</span>
-      <span class="badge-artemis">ARTEMIS IV</span>
-    </div>
-
-    <!-- Top Mission Day Badge -->
-    <div class="mini-badges">
-      <span class="hud-badge day-badge" id="badgeDay">Day 1/7</span>
-    </div>
-
-    <!-- Quick Tool Panels (Opens focused popup) -->
-    <div class="nav-buttons">
-      <button class="btn-nav" id="btnOpenCrew" title="Manage your 4 astronauts"><i data-lucide="users" style="width:17px;"></i> Crew</button>
-      <button class="btn-nav" id="btnOpenResearch" title="Unlock new buildings & upgrades"><i data-lucide="cpu" style="width:17px;"></i> Research</button>
-      <button class="btn-nav" id="btnOpenGoals" title="View mission goals & badges"><i data-lucide="award" style="width:17px;"></i> Goals</button>
-      <button class="btn-nav" id="btnAttribution" title="NASA Data Sources"><i data-lucide="satellite" style="width:17px;"></i> NASA Data</button>
-      <button class="btn-nav" id="btnAudioToggle"><i data-lucide="volume-2" style="width:17px;"></i> <span id="audioBtnText">SFX</span></button>
-    </div>
-  </header>
-
-  <!-- 3 BIG STAT TILES (Clear, Large, Simple to Track) -->
-  <div class="big-stats-grid">
-    <!-- 1. POWER -->
-    <div class="big-stat-tile" style="--stat-color: var(--amber-solar);">
-      <div class="stat-icon-wrap"><i data-lucide="zap" style="width:28px; height:28px;"></i></div>
-      <div class="stat-texts">
-        <span class="stat-label">⚡ Power Balance</span>
-        <span class="stat-number" id="statPower">10 / 10</span>
-        <span class="stat-subtext" id="subPower">Making +4⚡ / Using 2⚡</span>
-      </div>
-    </div>
-
-    <!-- 2. AIR -->
-    <div class="big-stat-tile" style="--stat-color: var(--green-life);">
-      <div class="stat-icon-wrap"><i data-lucide="wind" style="width:28px; height:28px;"></i></div>
-      <div class="stat-texts">
-        <span class="stat-label">🫁 Air Supply</span>
-        <span class="stat-number" id="statAir">25</span>
-        <span class="stat-subtext" id="subAir">+2 Air per sol</span>
-      </div>
-    </div>
-
-    <!-- 3. HEALTH -->
-    <div class="big-stat-tile" style="--stat-color: var(--red-alert);">
-      <div class="stat-icon-wrap"><i data-lucide="heart" style="width:28px; height:28px;"></i></div>
-      <div class="stat-texts">
-        <span class="stat-label">❤️ Crew Health</span>
-        <span class="stat-number" id="statHealth">100%</span>
-        <span class="stat-subtext" id="subHealth">Optimal Vitality</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3-STEP TUTORIAL BANNER (First-time player guide) -->
-  <div class="tutorial-banner" id="tutorialBanner">
-    <div class="tutorial-text">
-      <span class="tutorial-step-tag" id="tutTag">Step 1 of 3</span>
-      <span id="tutMsg">Tap 'Solar Panel' below, then tap an empty spot on the Moon map!</span>
-    </div>
-    <button class="btn-skip-tut" id="btnSkipTutorial">Skip Tutorial</button>
-  </div>
-
-  <!-- THE PLAY AREA (Larger Map Screen, 60-65% screen focus) -->
-  <div class="play-area-card" id="playAreaCard">
-    <div class="map-header">
-      <div class="map-title">
-        <i data-lucide="map-pin" style="width:20px; color:var(--cyan-bright);"></i>
-        <span>LUNAR SOUTH POLE · SHACKLETON CRATER RIM</span>
-      </div>
-      <!-- Space Weather Indicator -->
-      <div class="donki-indicator" id="donkiBadge">
-        <i data-lucide="sun" style="width:17px;"></i> Sun: Calm (C2.1)
-      </div>
-    </div>
-
-    <!-- Large Canvas Viewport (760x420 virtual resolution) -->
-    <div class="canvas-wrapper">
-      <canvas id="moonCanvas" width="760" height="420"></canvas>
-      <div class="canvas-overlay-status" id="canvasStatus">
-        <i data-lucide="radio" style="width:16px;"></i> Pressurized Habitat Dome Online
-      </div>
-      <div class="canvas-legend">
-        🏠 Habitat | ☀️ Solar | 🫁 Air Maker | 🛡️ Shield | 🚀 Lander
-      </div>
-    </div>
-
-    <!-- BUILD MENU DIRECTLY UNDER MAP WITH SUPPLIES & SCIENCE BADGES -->
-    <div class="build-dock">
-      <div class="dock-header">
-        <div class="dock-left-group">
-          <span class="dock-title"><i data-lucide="hammer" style="width:18px;"></i> CONSTRUCTION DECK</span>
-          <!-- Supplies and Science moved right near Construction -->
-          <span class="hud-badge supplies-badge"><i data-lucide="box" style="width:16px;"></i> <span id="badgeSupplies">12 Supplies</span></span>
-          <span class="hud-badge science-badge"><i data-lucide="flask-conical" style="width:16px;"></i> <span id="badgeScience">0 Science</span></span>
+    <!-- ====================================================================
+       TOP BAR (Outpost Style Header)
+       Game title, Day counter, Compact resource chips, Speed controls
+       ==================================================================== -->
+    <header class="top-bar">
+      <div class="top-bar-left">
+        <div class="brand-title">
+          <i data-lucide="moon" class="brand-icon"></i>
+          <div class="brand-text-group">
+            <span class="brand-name">MOON BASE KEEPER</span>
+            <span class="badge-artemis">ARTEMIS IV</span>
+          </div>
         </div>
-        <span id="dockInstructionText" class="dock-instruction">Select a building below, then tap an empty tile on the Moon map.</span>
       </div>
 
-      <div class="dock-buttons-row">
-        <!-- Building Slots: Starts with 3 buildings; others unlock via research -->
+      <!-- COMPACT RESOURCE CHIPS ROW (Power, Air, Health, Supplies, Science) -->
+      <div class="top-bar-resources">
+        <!-- Day Counter Chip -->
+        <div class="res-chip chip-day" title="Mission Sol (Day)">
+          <span class="chip-status-dot"></span>
+          <span class="chip-val" id="badgeDay">Day 1/7</span>
+        </div>
+
+        <!-- Power Chip -->
+        <div class="res-chip chip-power" title="Solar Generation & Battery Reserves">
+          <i data-lucide="zap" class="chip-icon"></i>
+          <span class="chip-label">Power</span>
+          <span class="chip-val" id="statPower">10 / 10</span>
+          <span class="chip-sub-hidden" id="subPower">Making +4⚡ / Using 2⚡</span>
+        </div>
+
+        <!-- Air Chip -->
+        <div class="res-chip chip-air" title="Oxygen Supply Reserves">
+          <i data-lucide="wind" class="chip-icon"></i>
+          <span class="chip-label">Air</span>
+          <span class="chip-val" id="statAir">25</span>
+          <span class="chip-sub-hidden" id="subAir">+2 Air per sol</span>
+        </div>
+
+        <!-- Health Chip -->
+        <div class="res-chip chip-health" title="Crew Health & Vitality">
+          <i data-lucide="heart" class="chip-icon"></i>
+          <span class="chip-label">Health</span>
+          <span class="chip-val" id="statHealth">100%</span>
+          <span class="chip-sub-hidden" id="subHealth">Optimal Vitality</span>
+        </div>
+
+        <!-- Supplies Chip -->
+        <div class="res-chip chip-supplies" title="Building & Repair Supplies">
+          <i data-lucide="box" class="chip-icon"></i>
+          <span class="chip-label">Supplies</span>
+          <span class="chip-val" id="badgeSupplies">12 Supplies</span>
+        </div>
+
+        <!-- Science Chip -->
+        <div class="res-chip chip-science" title="Collected Science & Research Points">
+          <i data-lucide="flask-conical" class="chip-icon"></i>
+          <span class="chip-label">Science</span>
+          <span class="chip-val" id="badgeScience">0 Science</span>
+        </div>
+      </div>
+
+      <!-- UTILITY TOOL BUTTONS -->
+      <div class="top-bar-right">
+        <div class="top-actions-bar">
+          <button type="button" class="btn-top-action" id="btnOpenResearch" title="NASA Tech Tree & Upgrades">
+            <i data-lucide="cpu" style="width:16px;"></i>
+            <span>Tech Tree</span>
+          </button>
+          <button type="button" class="btn-top-action" id="btnAttribution" title="NASA Data Sources & Attribution">
+            <i data-lucide="satellite" style="width:16px;"></i>
+            <span>NASA Data</span>
+          </button>
+          <button type="button" class="btn-top-action" id="btnAudioToggle" title="Toggle Sound Effects">
+            <i data-lucide="volume-2" style="width:16px;"></i>
+            <span id="audioBtnText">SFX</span>
+          </button>
+          <!-- Retained for mobile/nav bar accessibility -->
+          <button type="button" class="btn-top-action nav-mobile-pill" id="btnOpenCrew" title="Colony Crew">
+            <i data-lucide="users" style="width:16px;"></i>
+            <span>Crew</span>
+          </button>
+          <button type="button" class="btn-top-action nav-mobile-pill" id="btnOpenGoals" title="Mission Goals">
+            <i data-lucide="award" style="width:16px;"></i>
+            <span>Goals</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ====================================================================
+       INCOMING SPACE WEATHER WARNING CARD BANNER (Outpost Raid Style)
+       Shows threat using flare data, 1-line prep hint, progress bar, & DONKI source
+       ==================================================================== -->
+    <div class="weather-alert-container">
+      <section class="weather-warning-card warning-amber" id="weatherWarningCard" aria-label="Space Weather Warning">
+        <div class="warning-card-left">
+          <div class="warning-header-row">
+            <div class="warning-tag" id="weatherWarningTag">
+              <i data-lucide="alert-triangle" class="warning-icon" id="weatherWarningIcon"
+                style="width:18px;height:18px;"></i>
+              <span id="weatherStatusTitle">Solar Flare Warning</span>
+            </div>
+            <!-- Live or Archived NASA DONKI Data Source Badge -->
+            <div class="donki-source-chip" id="donkiBadge">
+              <i data-lucide="satellite" style="width:16px;height:16px;"></i>
+              <span id="donkiBadgeText">NASA DONKI · Checking feed...</span>
+            </div>
+          </div>
+          <div class="warning-headline" id="weatherThreatMsg">
+            Solar flare in 8 hours, class M1.2. Raise shields and charge batteries before it hits.
+          </div>
+          <div class="warning-hint" id="weatherHintMsg">
+            Hint: Build Radiation Shields (5 supplies) and keep batteries charged before it hits.
+          </div>
+        </div>
+
+        <div class="warning-card-right">
+          <div class="progress-meta">
+            <span class="progress-label" id="weatherProgressLabel">Impacting In</span>
+            <span class="progress-val" id="weatherProgressVal">8h (65%)</span>
+          </div>
+          <div class="progress-track" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-fill" id="weatherProgressFill" style="width: 65%;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3-Step Tutorial Banner -->
+      <aside class="tutorial-banner" id="tutorialBanner">
+        <div class="tutorial-text">
+          <span class="tutorial-step-tag" id="tutTag">Step 1 of 3</span>
+          <span id="tutMsg">Tap 'Solar Panel' below, then tap an empty spot on the Moon map!</span>
+        </div>
+        <button type="button" class="btn-skip-tut" id="btnSkipTutorial">Skip Tutorial</button>
+      </aside>
+    </div>
+
+    <!-- ====================================================================
+       THREE-COLUMN MAIN LAYOUT
+       Left: Build Menu | Centre: Large Map Area | Right: Crew & Goals
+       ==================================================================== -->
+    <div class="game-layout">
+
+      <!-- 1. LEFT PANEL: "Build" Menu with building cards grouped under headings -->
+      <aside class="panel-build" id="panelBuild" aria-label="Build Menu">
+        <div class="panel-header">
+          <div class="panel-header-title">
+            <i data-lucide="hammer" class="panel-icon"></i>
+            <div>
+              <h2>Build & Orders</h2>
+              <p class="panel-subtitle">Choose an action, then click the map.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dock-instruction" id="dockInstructionText">
+          Select a building below, then tap an empty tile on the Moon map.
+        </div>
+
+        <!-- Building cards grouped under headings (populated by JavaScript) -->
         <div class="build-slots-container" id="buildSlotsContainer">
-          <!-- Populated by JavaScript -->
+          <!-- Rendered with headings by renderBuildingDock() in app.js -->
         </div>
 
-        <!-- Big, clear End Day button -->
-        <button class="btn-end-day" id="btnEndDay">
-          <span>End Day ▶</span>
+        <!-- End Day Action -->
+        <div class="build-footer">
+          <button type="button" class="btn-end-day" id="btnEndDay">
+            <span>End Day ▶</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- 2. CENTRE PANEL: Large Map Area filling remaining width and height -->
+      <main class="panel-map play-area-card" id="playAreaCard" aria-label="Moon Surface Map">
+        <div class="map-header">
+          <div class="map-title">
+            <i data-lucide="map-pin" class="map-pin-icon"></i>
+            <span>LUNAR SOUTH POLE · SHACKLETON CRATER RIM</span>
+          </div>
+          <div class="map-header-controls">
+            <button type="button" class="btn-reset-view" id="btnResetView" title="Reset Map View">
+              <i data-lucide="scan" style="width:16px;height:16px;"></i>
+              <span>Reset View</span>
+            </button>
+            <div class="canvas-overlay-status" id="canvasStatus">
+              <i data-lucide="radio" style="width:15px;"></i> Pressurized Habitat Dome Online
+            </div>
+          </div>
+        </div>
+
+        <!-- Continuous World Canvas Viewport -->
+        <div class="canvas-wrapper" id="canvasWrapper">
+          <canvas id="moonCanvas" width="960" height="600" aria-label="Moon Base Surface Map"></canvas>
+          <!-- Floating Numbers Overlay (+4 power, -5 health) -->
+          <div id="floatingOverlay" class="floating-overlay" aria-hidden="true"></div>
+          <!-- Plain-Language Map Hover Tooltip -->
+          <div id="mapTooltip" class="map-tooltip hid" aria-hidden="true"></div>
+        </div>
+
+        <!-- Map Legend Bar -->
+        <div class="canvas-legend">
+          <span><img src="./assets/buildings/hab-dome.png" class="legend-thumb" alt="Hab"
+              onerror="this.style.display='none'"> Habitat</span>
+          <span><img src="./assets/buildings/solar-panel.png" class="legend-thumb" alt="Solar"
+              onerror="this.style.display='none'"> Solar</span>
+          <span><img src="./assets/buildings/air-maker.png" class="legend-thumb" alt="Air"
+              onerror="this.style.display='none'"> Air Maker</span>
+          <span><img src="./assets/buildings/radiation-shield.png" class="legend-thumb" alt="Shield"
+              onerror="this.style.display='none'"> Shield</span>
+          <span><img src="./assets/buildings/greenhouse.png" class="legend-thumb" alt="Greenhouse"
+              onerror="this.style.display='none'"> Greenhouse</span>
+          <span><img src="./assets/buildings/science-lab.png" class="legend-thumb" alt="Lab"
+              onerror="this.style.display='none'"> Lab</span>
+          <span><img src="./assets/buildings/battery-storage.png" class="legend-thumb" alt="Battery"
+              onerror="this.style.display='none'"> Battery</span>
+          <span><img src="./assets/buildings/artemis-lander.png" class="legend-thumb" alt="Lander"
+              onerror="this.style.display='none'"> Lander</span>
+        </div>
+      </main>
+
+      <!-- DEBRIEF / FINAL MISSION SCORE CARD (Replaces map when game finishes) -->
+      <section class="panel-map play-area-card debrief-card hid" id="debriefCard" aria-label="Mission Summary">
+        <div style="font-size:3.2rem;">🏆</div>
+        <h2 id="debriefTitle" style="font-family:var(--font-display); font-size:1.7rem; letter-spacing:1px;"></h2>
+        <p id="debriefMsg" style="color:var(--text-muted); max-width:560px; font-size:1.05rem;"></p>
+        <div class="debrief-score-text" id="debriefScore"></div>
+
+        <div class="debrief-stats-box">
+          <div>• Surface Explorers: <b id="resSurfaceCrew">--</b></div>
+          <div>• Gateway Station Orbit Crew: <b id="resOrbitCrew">--</b></div>
+          <div>• Water Ice Discovery: <b id="resWaterIce">--</b></div>
+          <div>• Science Discovered: <b id="resScience">--</b></div>
+          <div>• Oxygen Reserves Remaining: <b id="resAir">--</b></div>
+          <div>• Mission Days Completed: <b id="resDaysCompleted">--</b></div>
+        </div>
+
+        <div style="font-size:1rem; color:var(--text-muted); text-align:center; max-width:520px; line-height:1.5;">
+          Educational simulation scenario based on NASA Artemis architecture studies. Real scientific data integrated
+          from NASA DONKI and NASA OSDR.
+        </div>
+
+        <button type="button" class="btn-end-day" id="btnRestart" style="margin-top:10px;">
+          <i data-lucide="rotate-ccw"></i> Play Again (New Space Weather)
+        </button>
+      </section>
+
+      <!-- 3. RIGHT PANEL: Structure Inspector, Crew Cards & Mission Goals -->
+      <aside class="panel-crew-goals" id="panelCrewGoals" aria-label="Crew and Mission Goals">
+
+        <!-- SELECTED STRUCTURE INSPECTION CARD (Appears when any placed building is clicked) -->
+        <div class="panel-section inspect-card-section hid" id="inspectCard" aria-label="Selected Structure Details">
+          <div class="panel-header">
+            <div class="panel-header-title">
+              <i data-lucide="info" class="panel-icon"></i>
+              <div>
+                <h2>Selected Structure</h2>
+                <p class="panel-subtitle">Base hardware inspection</p>
+              </div>
+            </div>
+            <button type="button" class="btn-close-inspect" id="btnCloseInspect" title="Deselect structure"
+              aria-label="Close inspection card">✕</button>
+          </div>
+          <div class="inspect-body">
+            <div class="inspect-main-row">
+              <div class="inspect-thumb-wrap">
+                <img id="inspectImg" src="./assets/buildings/solar-panel.png" alt="Selected Building"
+                  class="inspect-thumb">
+              </div>
+              <div class="inspect-info">
+                <h3 class="inspect-title" id="inspectTitle">Solar Panel</h3>
+                <span class="inspect-status-pill status-powered" id="inspectStatus">⚡ Powered & Active</span>
+              </div>
+            </div>
+            <p class="inspect-desc" id="inspectDesc">Catches bright sunshine to generate +4 Power for the base.</p>
+            <div class="inspect-meta-box">
+              <div class="inspect-stat-row">
+                <span>Power Flow:</span>
+                <strong id="inspectPowerFlow">+4⚡ Generation</strong>
+              </div>
+              <div class="inspect-stat-row">
+                <span>Oxygen Generation:</span>
+                <strong id="inspectO2Flow">0🫁</strong>
+              </div>
+            </div>
+            <div class="inspect-actions">
+              <button type="button" class="btn-dismantle" id="btnDismantleSelected"
+                title="Remove building and recover half the supplies">
+                <i data-lucide="trash-2" style="width:16px;"></i>
+                <span id="dismantleBtnText">Remove (+1 🧱 Refund)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CREW SECTION (Four Astronaut Cards) -->
+        <div class="panel-section crew-section">
+          <div class="panel-header">
+            <div class="panel-header-title">
+              <i data-lucide="users" class="panel-icon"></i>
+              <div>
+                <h2>Colony Crew</h2>
+                <p class="panel-subtitle">4 Astronauts · Assign daily tasks</p>
+              </div>
+            </div>
+            <span class="crew-badge-count">4 Active</span>
+          </div>
+
+          <div class="crew-cards-list">
+            <!-- 1. Dr. Leo Kim (Science Specialist) -->
+            <div class="crew-card selected" id="crewCardKim" data-astronaut="kim" tabindex="0" role="button"
+              aria-label="Select Dr. Leo Kim">
+              <div class="crew-card-top">
+                <div class="crew-identity">
+                  <div class="crew-avatar-wrap avatar-science">
+                    <span class="crew-avatar">👨‍🔬</span>
+                  </div>
+                  <div>
+                    <div class="crew-name">Dr. Leo Kim</div>
+                    <div class="crew-role-sub">Science Specialist</div>
+                  </div>
+                </div>
+                <span class="crew-location-badge surface">SURFACE</span>
+              </div>
+              <div class="crew-job-select-wrap">
+                <label class="crew-select-label" for="selectKim">Today's Job:</label>
+                <select id="selectKim" class="custom-select crew-task-select">
+                  <option value="sci">Geology & Moon Rock Sampling (+3 Science)</option>
+                  <option value="ice">Search for Water Ice (Essential on Day 4!)</option>
+                  <option value="rest">Rest & Recover (+6 Crew Health)</option>
+                </select>
+              </div>
+              <!-- Plain Words Tooltip for 9-year-olds -->
+              <div class="crew-tooltip" id="tooltipKim">
+                <span class="tooltip-badge">💡 Job Intel:</span>
+                <span class="tooltip-text" id="tooltipTextKim">Dr. Kim uses his robotic scooper to pick up shiny Moon
+                  rocks and discover space secrets!</span>
+              </div>
+            </div>
+
+            <!-- 2. Elena Rostova (Engineering Specialist) -->
+            <div class="crew-card" id="crewCardElena" data-astronaut="elena" tabindex="0" role="button"
+              aria-label="Select Elena Rostova">
+              <div class="crew-card-top">
+                <div class="crew-identity">
+                  <div class="crew-avatar-wrap avatar-engineering">
+                    <span class="crew-avatar">👩‍🔧</span>
+                  </div>
+                  <div>
+                    <div class="crew-name">Elena Rostova</div>
+                    <div class="crew-role-sub">Engineering Specialist</div>
+                  </div>
+                </div>
+                <span class="crew-location-badge surface">SURFACE</span>
+              </div>
+              <div class="crew-job-select-wrap">
+                <label class="crew-select-label" for="selectElena">Today's Job:</label>
+                <select id="selectElena" class="custom-select crew-task-select">
+                  <option value="power">Clean Solar Panels & Balance Grid (+3 Power)</option>
+                  <option value="eclss">Tune Air Scrubbers (+4 Air Supply)</option>
+                  <option value="repair">Fix Equipment Glitch (Crucial on Day 5!)</option>
+                  <option value="rest">Rest & Recover (+6 Crew Health)</option>
+                </select>
+              </div>
+              <!-- Plain Words Tooltip for 9-year-olds -->
+              <div class="crew-tooltip" id="tooltipElena">
+                <span class="tooltip-badge">💡 Job Intel:</span>
+                <span class="tooltip-text" id="tooltipTextElena">Elena wipes grey dust off the solar panels so they
+                  catch bright sunshine to make electricity!</span>
+              </div>
+            </div>
+
+            <!-- 3. Pilot Marcus Vance (Flight Pilot · Gateway Station) -->
+            <div class="crew-card orbit-card" id="crewCardVance" data-astronaut="vance" tabindex="0" role="button"
+              aria-label="Select Pilot Marcus Vance">
+              <div class="crew-card-top">
+                <div class="crew-identity">
+                  <div class="crew-avatar-wrap avatar-orbit">
+                    <span class="crew-avatar">👨‍🚀</span>
+                  </div>
+                  <div>
+                    <div class="crew-name">Marcus Vance</div>
+                    <div class="crew-role-sub">Flight Pilot · Gateway Station</div>
+                  </div>
+                </div>
+                <span class="crew-location-badge orbit">ORBIT</span>
+              </div>
+              <div class="crew-job-select-wrap">
+                <span class="crew-select-label">Today's Job:</span>
+                <button type="button" class="btn-orbit-action" id="btnOrbitAction">Run Telemetry Scan</button>
+              </div>
+              <!-- Plain Words Tooltip for 9-year-olds -->
+              <div class="crew-tooltip" id="tooltipVance">
+                <span class="tooltip-badge">💡 Job Intel:</span>
+                <span class="tooltip-text" id="tooltipTextVance">Marcus beams radar signals from space to map safe
+                  driving paths for the Moon rover (+2 Science)!</span>
+              </div>
+            </div>
+
+            <!-- 4. Commander Sarah Chen (Mission Commander) -->
+            <div class="crew-card commander-card" id="crewCardChen" data-astronaut="chen" tabindex="0" role="button"
+              aria-label="Select Commander Sarah Chen">
+              <div class="crew-card-top">
+                <div class="crew-identity">
+                  <div class="crew-avatar-wrap avatar-commander">
+                    <span class="crew-avatar">👩‍✈️</span>
+                  </div>
+                  <div>
+                    <div class="crew-name">Sarah Chen</div>
+                    <div class="crew-role-sub">Mission Commander · Gateway</div>
+                  </div>
+                </div>
+                <span class="crew-location-badge commander">COMMAND</span>
+              </div>
+              <div class="crew-job-select-wrap">
+                <span class="crew-select-label">Today's Job:</span>
+                <div class="commander-duty-btn" id="btnCommanderDuty" title="Commander Chen's emergency veto status">
+                  <i data-lucide="shield-check" style="width:16px;height:16px;"></i>
+                  <span>Emergency Safety Guard</span>
+                </div>
+              </div>
+              <!-- Plain Words Tooltip for 9-year-olds -->
+              <div class="crew-tooltip" id="tooltipChen">
+                <span class="tooltip-badge">💡 Job Intel:</span>
+                <span class="tooltip-text">Commander Chen watches over the whole crew from orbit, ready to press the big
+                  safety button if danger strikes!</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MISSION GOALS WITH COLLAPSIBLE SECTIONS -->
+        <div class="panel-section goals-collapsible-wrapper">
+
+          <!-- Goals Collapsible (Open by default) -->
+          <details class="collapsible-section" open>
+            <summary class="collapsible-summary">
+              <div class="summary-left">
+                <i data-lucide="target" style="width:18px;"></i>
+                <span class="summary-title">Mission Goals</span>
+              </div>
+              <span class="summary-toggle-icon">▾</span>
+            </summary>
+            <div class="collapsible-content" id="missionGoalsList">
+              <!-- Goal 1: Build 3 Solar Panels -->
+              <div class="goal-item" id="goalSolar">
+                <span class="goal-icon">☀️</span>
+                <div class="goal-content">
+                  <div class="goal-title-row">
+                    <strong class="goal-name">Build 3 Solar Panels</strong>
+                    <span class="goal-progress-badge" id="badgeGoalSolar">0/3</span>
+                  </div>
+                  <div class="goal-progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                    aria-valuemax="3">
+                    <div class="goal-progress-fill" id="fillGoalSolar" style="width: 0%;"></div>
+                  </div>
+                  <p class="goal-desc">Generate clean electricity for the lunar outpost.</p>
+                </div>
+              </div>
+
+              <!-- Goal 2: Build 2 Oxygen Units -->
+              <div class="goal-item" id="goalAir">
+                <span class="goal-icon">🫁</span>
+                <div class="goal-content">
+                  <div class="goal-title-row">
+                    <strong class="goal-name">Build 2 Oxygen Units</strong>
+                    <span class="goal-progress-badge" id="badgeGoalAir">0/2</span>
+                  </div>
+                  <div class="goal-progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                    aria-valuemax="2">
+                    <div class="goal-progress-fill" id="fillGoalAir" style="width: 0%;"></div>
+                  </div>
+                  <p class="goal-desc">Ensure breathable air reserves for surface crew.</p>
+                </div>
+              </div>
+
+              <!-- Goal 3: Collect 20 Science Points -->
+              <div class="goal-item" id="goalSci">
+                <span class="goal-icon">🔬</span>
+                <div class="goal-content">
+                  <div class="goal-title-row">
+                    <strong class="goal-name">Collect 20 Science</strong>
+                    <span class="goal-progress-badge" id="badgeGoalSci">0/20</span>
+                  </div>
+                  <div class="goal-progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                    aria-valuemax="20">
+                    <div class="goal-progress-fill" id="fillGoalSci" style="width: 0%;"></div>
+                  </div>
+                  <p class="goal-desc">Drill rock samples, run labs, and scan from orbit.</p>
+                </div>
+              </div>
+
+              <!-- Goal 4: Confirm Water Ice -->
+              <div class="goal-item" id="goalIce">
+                <span class="goal-icon">🧊</span>
+                <div class="goal-content">
+                  <div class="goal-title-row">
+                    <strong class="goal-name">Confirm Water Ice</strong>
+                    <span class="goal-progress-badge" id="badgeGoalIce">0/1</span>
+                  </div>
+                  <div class="goal-progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                    aria-valuemax="1">
+                    <div class="goal-progress-fill" id="fillGoalIce" style="width: 0%;"></div>
+                  </div>
+                  <p class="goal-desc">Locate deep subsurface ice deposits in Shackleton Crater.</p>
+                </div>
+              </div>
+
+              <!-- Goal 5: Survive All 7 Sols -->
+              <div class="goal-item" id="goalSol">
+                <span class="goal-icon">🎯</span>
+                <div class="goal-content">
+                  <div class="goal-title-row">
+                    <strong class="goal-name">Survive All 7 Sols</strong>
+                    <span class="goal-progress-badge" id="badgeGoalSol">1/7</span>
+                  </div>
+                  <div class="goal-progress-track" role="progressbar" aria-valuenow="1" aria-valuemin="1"
+                    aria-valuemax="7">
+                    <div class="goal-progress-fill" id="fillGoalSol" style="width: 14%;"></div>
+                  </div>
+                  <p class="goal-desc">Keep both surface explorers and Gateway orbit crew alive.</p>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <!-- Colony Milestones Collapsible -->
+          <details class="collapsible-section">
+            <summary class="collapsible-summary">
+              <div class="summary-left">
+                <i data-lucide="flag" style="width:18px;"></i>
+                <span class="summary-title">Colony Milestones</span>
+              </div>
+              <span class="summary-toggle-icon">▸</span>
+            </summary>
+            <div class="collapsible-content">
+              <div class="milestone-item">
+                <span class="milestone-bullet">•</span>
+                <div><strong>Habitat Anchor:</strong> South Pole Shackleton Rim (89.9°S)</div>
+              </div>
+              <div class="milestone-item">
+                <span class="milestone-bullet">•</span>
+                <div><strong>Power Architecture:</strong> High-efficiency silicon arrays & batteries</div>
+              </div>
+              <div class="milestone-item">
+                <span class="milestone-bullet">•</span>
+                <div><strong>Closed-Loop ECLSS:</strong> 98% regenerative life support & scrubbers</div>
+              </div>
+            </div>
+          </details>
+
+          <!-- Real NASA Science Context Collapsible -->
+          <details class="collapsible-section">
+            <summary class="collapsible-summary">
+              <div class="summary-left">
+                <i data-lucide="satellite" style="width:18px;"></i>
+                <span class="summary-title">NASA Science Context</span>
+              </div>
+              <span class="summary-toggle-icon">▸</span>
+            </summary>
+            <div class="collapsible-content">
+              <p style="margin-bottom:8px; line-height:1.5;">Real NASA DONKI space weather telemetry & NASA OSDR
+                biological datasets integrated into game simulation.</p>
+              <p><a href="https://osdr.nasa.gov" target="_blank" rel="noopener noreferrer"
+                  style="color:var(--cyan-air); text-decoration:underline; font-weight:600;">Explore NASA OSDR
+                  Repository ↗</a></p>
+            </div>
+          </details>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  </div>
+
+  <!-- ====================================================================
+     MODALS & DIALOGS
+     (Daily Dilemma, Sol Report, Tech Tree, Goals & NASA Attribution)
+     ==================================================================== -->
+
+  <!-- 1. DAILY DILEMMA POPUP -->
+  <div class="modal-backdrop" id="dilemmaModal" role="dialog" aria-modal="true" aria-labelledby="popupDilemmaTitle">
+    <div class="modal-window">
+      <div class="modal-header-bar">
+        <div>
+          <span class="modal-badge-day" id="popupDilemmaBadge">Day 1</span>
+          <h2 id="popupDilemmaTitle">Daily Mission Decision</h2>
+        </div>
+        <button type="button" class="btn-close-modal" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="popupDilemmaDesc" style="color:#cbd5e1; font-size:16px; line-height:1.5;"></p>
+
+        <div
+          style="font-family:var(--font-heading); font-weight:700; color:#94a3b8; font-size:16px; letter-spacing:0.5px;">
+          CHOOSE TODAY'S MISSION ACTION:
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:12px;" id="popupChoiceContainer">
+          <!-- 2 Large, clear choice cards populated by JavaScript -->
+        </div>
+
+        <!-- Commander Veto Callout (Only appears if risky choice is picked) -->
+        <div class="emergency-callout hid" id="emergencyCallout">
+          <div style="font-size:16px;">
+            <b>Commander Sarah Chen (Gateway Orbit):</b>
+            <span style="color:#cbd5e1; display:block; font-size:16px;">Override this dangerous choice to keep the crew
+              safe?</span>
+          </div>
+          <button type="button" class="btn-emergency-override" id="btnEmergencyVeto">★ Override Call</button>
+        </div>
+
+        <button type="button" class="btn-end-day" id="btnConfirmDay"
+          style="align-self:stretch; justify-content:center; margin-top:8px;">
+          <span>Confirm & Run Day ▶</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- DEBRIEF / FINAL MISSION SCORE CARD (Hidden until Mission Complete) -->
-  <div class="play-area-card debrief-card hid" id="debriefCard">
-    <div style="font-size:3.2rem;">🏆</div>
-    <h2 id="debriefTitle" style="font-family:var(--font-display); font-size:1.7rem; letter-spacing:1px;">Mission Accomplished!</h2>
-    <p id="debriefMsg" style="color:var(--text-muted); max-width:560px; font-size:1.05rem;"></p>
-    <div class="debrief-score-text" id="debriefScore">SCORE: 1,420 PTS</div>
+  <!-- 2. DAILY REPORT MODAL -->
+  <div class="modal-backdrop" id="reportModal" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
+    <div class="modal-window">
+      <div class="modal-header-bar">
+        <h2 id="reportModalTitle">Sol Mission Report</h2>
+        <button type="button" class="btn-close-modal" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="report-log" id="reportLogBox"></div>
 
-    <div style="background:rgba(255,255,255,0.05); padding:16px; border-radius:12px; width:100%; max-width:500px; text-align:left; font-size:1rem; display:flex; flex-direction:column; gap:6px;">
-      <div>• Surface Explorers Surviving: <b id="resSurfaceCrew" style="color:#10b981;">2 / 2 Safe</b></div>
-      <div>• Gateway Station Orbit Crew: <b id="resOrbitCrew" style="color:#10b981;">2 / 2 Safe</b></div>
-      <div>• Water Ice Discovery: <b id="resWaterIce" style="color:#00f0ff;">Confirmed (+300 Pts)</b></div>
-      <div>• Science Discovered: <b id="resScience" style="color:#c084fc;">28 Points</b></div>
-      <div>• Oxygen Reserves: <b id="resAir" style="color:#10b981;">18 Units Left</b></div>
+        <!-- Real NASA OSDR Fact Card with direct link -->
+        <div class="nasa-fact-card">
+          <div
+            style="display:flex; justify-content:space-between; align-items:center; font-family:var(--font-heading); color:var(--purple-science); font-weight:700; flex-wrap:wrap; gap:6px;">
+            <span>🔬 NASA SCIENCE FACT</span>
+            <a id="factLink" href="https://osdr.nasa.gov" target="_blank" rel="noopener noreferrer"
+              style="color:var(--cyan-air); text-decoration:underline; font-size:16px; font-family:var(--font-mono);">
+              <span id="factCode">NASA OSDR</span> ↗
+            </a>
+          </div>
+          <div id="factText" style="font-size:16px; color:#f1f5f9; line-height:1.5;"></div>
+        </div>
+
+        <button type="button" class="btn-end-day" id="btnNextSol" style="align-self:stretch; justify-content:center;">
+          <span>Proceed to Next Sol ▶</span>
+        </button>
+      </div>
     </div>
-
-    <button class="btn-end-day" id="btnRestart" style="margin-top:10px;">
-      <i data-lucide="rotate-ccw"></i> Play Again (New Space Weather)
-    </button>
   </div>
 
-</div>
-
-<!-- ====================================================================
-     FOCUSED POPUPS (Show one thing at a time, keeping screen clean)
-     ==================================================================== -->
-
-<!-- 1. DAILY DILEMMA POPUP -->
-<div class="modal-backdrop" id="dilemmaModal">
-  <div class="modal-window">
-    <div class="modal-header-bar">
-      <div>
-        <span style="font-family:var(--font-mono); font-size:0.85rem; color:var(--amber-solar);" id="popupDilemmaBadge">Day 1</span>
-        <h2 id="popupDilemmaTitle">Where should we land?</h2>
+  <!-- 3. CREW MODAL (Accessible via quick button) -->
+  <div class="modal-backdrop" id="crewModal" role="dialog" aria-modal="true" aria-labelledby="crewModalTitle">
+    <div class="modal-window">
+      <div class="modal-header-bar">
+        <h2 id="crewModalTitle">👨‍🚀 Artemis IV Flight Crew Dossier</h2>
+        <button type="button" class="btn-close-modal" aria-label="Close dialog">&times;</button>
       </div>
-      <button class="btn-close-modal">&times;</button>
-    </div>
-    <div class="modal-body">
-      <p id="popupDilemmaDesc" style="color:#cbd5e1;">Description text...</p>
-      
-      <div style="font-family:var(--font-heading); font-weight:700; color:#94a3b8; font-size:0.95rem;">
-        CHOOSE TODAY'S MISSION ACTION:
-      </div>
+      <div class="modal-body">
+        <p style="font-size:16px; color:#cbd5e1; line-height:1.5;">Your flight crew consists of 2 astronauts on the Moon
+          surface and 2 in lunar orbit on Gateway station. Assign their daily tasks anytime in the right-hand Colony
+          Crew panel.</p>
 
-      <div style="display:flex; flex-direction:column; gap:12px;" id="popupChoiceContainer">
-        <!-- 2 Large, clear choice cards -->
-      </div>
-
-      <!-- Commander Veto Callout (Only appears if risky choice is picked) -->
-      <div class="emergency-callout hid" id="emergencyCallout">
-        <div style="font-size:0.95rem;">
-          <b>Commander Sarah Chen:</b>
-          <span style="color:#cbd5e1; display:block; font-size:0.85rem;">Override this dangerous choice to keep the crew safe?</span>
+        <div class="crew-card">
+          <div class="crew-card-top">
+            <b>🔬 Dr. Leo Kim</b>
+            <span class="crew-location-badge surface">SURFACE SPECIALIST</span>
+          </div>
+          <p style="font-size:16px; color:#94a3b8; margin-top:4px;">Specialized in lunar geology, ice drilling, and
+            sampling in Shackleton Crater.</p>
         </div>
-        <button class="btn-emergency-override" id="btnEmergencyVeto">★ Override Call</button>
-      </div>
 
-      <button class="btn-end-day" id="btnConfirmDay" style="align-self:stretch; justify-content:center; margin-top:8px;">
-        <span>Confirm & Run Day ▶</span>
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- 2. DAILY REPORT MODAL -->
-<div class="modal-backdrop" id="reportModal">
-  <div class="modal-window">
-    <div class="modal-header-bar">
-      <h2 id="reportModalTitle">Sol 1 Mission Report</h2>
-      <button class="btn-close-modal">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div class="report-log" id="reportLogBox"></div>
-
-      <!-- Real NASA OSDR Fact Card -->
-      <div style="background:linear-gradient(135deg, rgba(192, 132, 252, 0.15), rgba(15, 23, 42, 0.95)); border:2px solid var(--purple-science); border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:6px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; font-family:var(--font-heading); color:var(--purple-science); font-weight:700;">
-          <span>🔬 DID YOU KNOW? (NASA Science Fact)</span>
-          <span id="factCode" style="font-family:var(--font-mono); font-size:0.85rem;">OSDR-48</span>
+        <div class="crew-card">
+          <div class="crew-card-top">
+            <b>🛠️ Elena Rostova</b>
+            <span class="crew-location-badge surface">ENGINEERING SPECIALIST</span>
+          </div>
+          <p style="font-size:16px; color:#94a3b8; margin-top:4px;">Expert in ECLSS regenerative air systems, solar
+            arrays, and high-vacuum repairs.</p>
         </div>
-        <div id="factText" style="font-size:1rem; color:#f1f5f9;">NASA finding...</div>
-      </div>
 
-      <button class="btn-end-day" id="btnNextSol" style="align-self:stretch; justify-content:center;">
-        <span>Proceed to Next Sol ▶</span>
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- 3. CREW PANEL POPUP -->
-<div class="modal-backdrop" id="crewModal">
-  <div class="modal-window">
-    <div class="modal-header-bar">
-      <h2>👨‍🚀 Artemis IV Flight Crew</h2>
-      <button class="btn-close-modal">&times;</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:1rem; color:#cbd5e1;">Your crew has 2 astronauts on the Moon surface and 2 in lunar orbit on the Gateway space station.</p>
-
-      <!-- Surface Astronaut 1: Science Specialist Dr. Leo Kim -->
-      <div style="background:rgba(30, 41, 59, 0.7); border:1px solid #273553; border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:6px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <b style="font-size:1.1rem; color:#fff;">🔬 Dr. Leo Kim (Science Specialist)</b>
-          <span style="color:#ffb703; font-weight:700; font-size:0.85rem;">SURFACE TEAM</span>
+        <div class="crew-card orbit-card">
+          <div class="crew-card-top">
+            <b>🛰️ Pilot Marcus Vance</b>
+            <span class="crew-location-badge orbit">GATEWAY ORBIT</span>
+          </div>
+          <p style="font-size:16px; color:#94a3b8; margin-top:4px;">Maintains Lunar Gateway station telemetry and
+            orbital radar sweeps over South Pole.</p>
         </div>
-        <div style="font-size:0.95rem; color:#94a3b8;">Assign today's science focus:</div>
-        <select id="selectKim" style="background:#101828; color:#fff; border:1px solid #334155; padding:9px; border-radius:6px; font-size:1rem;">
-          <option value="sci">Geology & Moon Rock Sampling (+3 Science)</option>
-          <option value="ice">Search for Water Ice (Essential on Day 4!)</option>
-          <option value="rest">Rest & Recover (+6 Crew Health)</option>
-        </select>
-      </div>
 
-      <!-- Surface Astronaut 2: Engineering Specialist Elena Rostova -->
-      <div style="background:rgba(30, 41, 59, 0.7); border:1px solid #273553; border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:6px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <b style="font-size:1.1rem; color:#fff;">🛠️ Elena Rostova (Engineering Specialist)</b>
-          <span style="color:#ffb703; font-weight:700; font-size:0.85rem;">SURFACE TEAM</span>
-        </div>
-        <div style="font-size:0.95rem; color:#94a3b8;">Assign today's maintenance focus:</div>
-        <select id="selectElena" style="background:#101828; color:#fff; border:1px solid #334155; padding:9px; border-radius:6px; font-size:1rem;">
-          <option value="power">Clean Solar Panels & Balance Grid (+3 Power)</option>
-          <option value="eclss">Tune Air Scrubbers (+4 Air Supply)</option>
-          <option value="repair">Fix Equipment Glitch (Crucial on Day 5!)</option>
-          <option value="rest">Rest & Recover (+6 Crew Health)</option>
-        </select>
-      </div>
-
-      <!-- Orbit Astronaut 1: Pilot Marcus Vance -->
-      <div style="background:rgba(0, 240, 255, 0.08); border:1px dashed #00f0ff; border-radius:10px; padding:14px; display:flex; align-items:center; justify-content:space-between; gap:12px;">
-        <div>
-          <b style="color:#00f0ff;">🛰️ Pilot Marcus Vance (Gateway Orbit)</b>
-          <div style="font-size:0.9rem; color:#94a3b8;">Can run 1 satellite scan per day to gather orbital data.</div>
-        </div>
-        <button class="btn-emergency-override" id="btnOrbitAction" style="background:var(--cyan-bright); color:#000;">Run Telemetry Scan</button>
-      </div>
-
-      <!-- Orbit Astronaut 2: Commander Sarah Chen -->
-      <div style="background:rgba(192, 132, 252, 0.08); border:1px dashed #c084fc; border-radius:10px; padding:14px;">
-        <b style="color:#c084fc;">★ Commander Sarah Chen (Mission Commander)</b>
-        <div style="font-size:0.9rem; color:#94a3b8; margin-top:3px;">
-          Oversees crew safety from orbit. Whenever a dangerous event happens on the Moon, Commander Chen can veto it to protect the crew!
+        <div class="crew-card commander-card">
+          <div class="crew-card-top">
+            <b>★ Commander Sarah Chen</b>
+            <span class="crew-location-badge commander">MISSION COMMANDER</span>
+          </div>
+          <p style="font-size:16px; color:#94a3b8; margin-top:4px;">Flight commander on Gateway. Holds emergency abort
+            veto for hazardous surface situations.</p>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- 4. RESEARCH TREE POPUP -->
-<div class="modal-backdrop" id="researchModal">
-  <div class="modal-window">
-    <div class="modal-header-bar">
-      <h2>🔬 NASA Research & Tech Unlocks</h2>
-      <button class="btn-close-modal">&times;</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:1rem; color:#cbd5e1;">Spend your collected Science points to unlock better equipment based on real NASA technology!</p>
-      <div id="researchGrid" style="display:flex; flex-direction:column; gap:12px;">
-        <!-- Populated by JavaScript -->
+  <!-- 4. RESEARCH TREE POPUP -->
+  <div class="modal-backdrop" id="researchModal" role="dialog" aria-modal="true" aria-labelledby="researchModalTitle">
+    <div class="modal-window">
+      <div class="modal-header-bar">
+        <h2 id="researchModalTitle">🔬 NASA Tech Tree & Upgrades</h2>
+        <button type="button" class="btn-close-modal" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:16px; color:#cbd5e1; line-height:1.5;">Spend your collected Science points to unlock
+          upgraded hardware. Each technology is cross-referenced with real NASA programs or clearly labeled if
+          conceptual.</p>
+        <div id="researchGrid" style="display:flex; flex-direction:column; gap:10px;">
+          <!-- Populated by JavaScript -->
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- 5. GOALS POPUP -->
-<div class="modal-backdrop" id="goalsModal">
-  <div class="modal-window">
-    <div class="modal-header-bar">
-      <h2>🎯 Mission Goals & Badges</h2>
-      <button class="btn-close-modal">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div style="display:flex; flex-direction:column; gap:10px;">
-        <div class="goal-row"><span>🎯</span> <span><b>Survive All 7 Sols:</b> Keep at least 1 surface explorer and both orbit crew alive.</span></div>
-        <div class="goal-row"><span>🫁</span> <span><b>Air Independence:</b> Keep your Air reserve above 25.</span></div>
-        <div class="goal-row"><span>🧊</span> <span><b>Confirm Water Ice:</b> Find real frozen water in Shackleton Crater on Day 4.</span></div>
-        <div class="goal-row"><span>🔬</span> <span><b>Lunar Scientist:</b> Collect at least 20 Science Points from experiments.</span></div>
-        <div class="goal-row"><span>🛡️</span> <span><b>Shield Defender:</b> Use your Radiation Shield to block a solar storm.</span></div>
+  <!-- 5. GOALS POPUP -->
+  <div class="modal-backdrop" id="goalsModal" role="dialog" aria-modal="true" aria-labelledby="goalsModalTitle">
+    <div class="modal-window">
+      <div class="modal-header-bar">
+        <h2 id="goalsModalTitle">🎯 Mission Goals & Badges</h2>
+        <button type="button" class="btn-close-modal" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="goal-row"><span>🎯</span> <span><b>Survive All 7 Sols:</b> Keep at least 1 surface explorer and
+              both orbit crew alive through the departure sol.</span></div>
+          <div class="goal-row"><span>🫁</span> <span><b>Life Support Master:</b> Keep oxygen reserves above 25 units
+              throughout the mission.</span></div>
+          <div class="goal-row"><span>🧊</span> <span><b>Confirm Lunar Water Ice:</b> Execute a deep drill or laser
+              survey in Shackleton Crater on Sol 4.</span></div>
+          <div class="goal-row"><span>🔬</span> <span><b>Artemis Field Scientist:</b> Collect at least 20 Science Points
+              through rock sampling and experiments.</span></div>
+          <div class="goal-row"><span>🛡️</span> <span><b>Storm Veteran:</b> Successfully deploy radiation shielding to
+              mitigate a DONKI solar storm.</span></div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- 6. NASA DATA & ATTRIBUTION MODAL -->
-<div class="modal-backdrop" id="attribModal">
-  <div class="modal-window">
-    <div class="modal-header-bar">
-      <h2>🛰️ NASA Science & Data Attribution</h2>
-      <button class="btn-close-modal">&times;</button>
-    </div>
-    <div class="modal-content">
-      <div style="background:rgba(255,255,255,0.05); padding:14px; border-radius:8px; border:1px solid #273553;">
-        <h4 style="color:var(--amber-solar); margin-bottom:4px;">1. NASA DONKI Space Weather API</h4>
-        <p>Endpoint: <code>api.nasa.gov/DONKI/FLR</code>. Live solar flare and CME data controls in-game space weather alerts. When the Sun erupts, solar panels lose power and radiation shields must be powered up.</p>
+  <!-- 6. NASA DATA & ATTRIBUTION MODAL -->
+  <div class="modal-backdrop" id="attribModal" role="dialog" aria-modal="true" aria-labelledby="attribModalTitle">
+    <div class="modal-window">
+      <div class="modal-header-bar">
+        <h2 id="attribModalTitle">🛰️ NASA Science & Data Attribution</h2>
+        <button type="button" class="btn-close-modal" aria-label="Close dialog">&times;</button>
       </div>
+      <div class="modal-content">
+        <!-- Data Status Card -->
+        <div class="attrib-box">
+          <h4
+            style="color:var(--amber-solar); display:flex; justify-content:space-between; align-items:center; font-size:16px;">
+            <span>1. NASA DONKI Space Weather API</span>
+            <span class="attrib-pill" id="attrDonkiBadge">Checking Feed...</span>
+          </h4>
+          <p><strong>Endpoint:</strong> <code>https://api.nasa.gov/DONKI/notifications?type=FLR</code></p>
+          <p><strong>Simulation Use:</strong> Real solar flare observation notifications from the Space Weather Database
+            Of Notifications, Knowledge, Information (DONKI) at NASA Goddard Space Flight Center. The game dynamically
+            tracks solar storm classes (C, M, and X-class flares) to trigger in-game radiation alerts and power balance
+            challenges.</p>
+          <p><em>Note:</em> The simulation exclusively utilizes solar flare (FLR) radiation telemetry; coronal mass
+            ejections (CMEs) have been omitted from the physics model for gameplay clarity.</p>
+        </div>
 
-      <div style="background:rgba(255,255,255,0.05); padding:14px; border-radius:8px; border:1px solid #273553;">
-        <h4 style="color:var(--purple-science); margin-bottom:4px;">2. NASA Open Science Data Repository (OSDR)</h4>
-        <p>Real biological and life-support findings (OSDR-137 plant growth, OSDR-48 cosmic radiation shielding, OSDR-311 water recycling, and the NASA Twins Study) appear after each sol.</p>
-      </div>
+        <!-- Verified OSDR Studies -->
+        <div class="attrib-box">
+          <h4 style="color:var(--purple-science); font-size:16px;">2. NASA Open Science Data Repository (OSDR)</h4>
+          <p>Every post-sol scientific discovery references genuine research datasets hosted on <a
+              href="https://osdr.nasa.gov" target="_blank" rel="noopener noreferrer"
+              style="color:var(--cyan-air); text-decoration:underline;">osdr.nasa.gov</a>:</p>
+          <ul class="attrib-list">
+            <li>
+              <a href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-658" target="_blank"
+                rel="noopener noreferrer">OSD-658</a>:
+              <em>Transcriptomic changes in Arabidopsis seedlings exposed to simulated Galactic Cosmic Rays at the NASA
+                Space Radiation Laboratory.</em>
+            </li>
+            <li>
+              <a href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-343" target="_blank"
+                rel="noopener noreferrer">OSD-343</a>:
+              <em>Comprehensive multi-omics analysis of astronaut mitochondrial stress and spaceflight impact,
+                validating NASA Twins Study data.</em>
+            </li>
+            <li>
+              <a href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-137" target="_blank"
+                rel="noopener noreferrer">OSD-137</a>:
+              <em>Rodent Research-3-CASIS: Mouse transcriptomic and histology data evaluating bone and muscle mass loss
+                countermeasures in spaceflight.</em>
+            </li>
+            <li>
+              <a href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-522" target="_blank"
+                rel="noopener noreferrer">OSD-522</a>:
+              <em>Integrative transcriptomics and proteomics of spaceflight seedlings adapting to microgravity and
+                ionizing radiation on the ISS.</em>
+            </li>
+            <li>
+              <a href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-48" target="_blank"
+                rel="noopener noreferrer">OSD-48</a>:
+              <em>Rodent Research-1 (RR1) NASA Validation Flight: Multi-omics and liver/tissue response baselines for
+                long-duration human space missions.</em>
+            </li>
+          </ul>
+        </div>
 
-      <div style="background:rgba(255,255,255,0.05); padding:14px; border-radius:8px; border:1px solid #273553;">
-        <h4 style="color:var(--cyan-bright); margin-bottom:4px;">3. Artemis IV Mission Architecture</h4>
-        <p>Models NASA's planned 7-day surface expedition at the Lunar South Pole (Shackleton Crater) supported by Lunar Gateway orbital operations.</p>
+        <!-- Verified NASA Engineering Hardware -->
+        <div class="attrib-box">
+          <h4 style="color:var(--cyan-air); font-size:16px;">3. NASA Engineering & Mission Architecture</h4>
+          <ul class="attrib-list">
+            <li><strong>NASA Marshall ECLSS:</strong> The 98% water recycling rate is achieved by NASA Marshall's
+              regenerative Environmental Control and Life Support System (Urine Processor Assembly + Brine Processor
+              Assembly) aboard the ISS (<a
+                href="https://www.nasa.gov/missions/station/iss-research/water-recovery-system-eclss/" target="_blank"
+                rel="noopener noreferrer" style="color:var(--cyan-air); text-decoration:underline;">NASA ECLSS
+                Overview</a>).</li>
+            <li><strong>NASA Glenn Research Center:</strong> Perovskite thin-film photovoltaic research tested in low
+              Earth orbit aboard the ISS via the MISSE platform (<a
+                href="https://www.nasa.gov/image-article/solar-cells-tested-on-space-station/" target="_blank"
+                rel="noopener noreferrer" style="color:var(--cyan-air); text-decoration:underline;">NASA Glenn Solar
+                Testing</a>).</li>
+            <li><strong>NASA VIPER TRIDENT Drill:</strong> The Regolith and Ice Drill for Exploring New Terrains
+              (TRIDENT) developed by Honeybee Robotics and NASA Ames for subsurface volatile sampling (<a
+                href="https://www.nasa.gov/viper/" target="_blank" rel="noopener noreferrer"
+                style="color:var(--cyan-air); text-decoration:underline;">NASA VIPER Mission</a>).</li>
+            <li><strong>Artemis IV Architecture:</strong> Inspired by NASA's planned Lunar South Pole surface stay
+              supported by the Lunar Gateway orbiting station (<a href="https://www.nasa.gov/artemis/" target="_blank"
+                rel="noopener noreferrer" style="color:var(--cyan-air); text-decoration:underline;">NASA Artemis
+                Program</a>).</li>
+          </ul>
+        </div>
+
+        <!-- Fictionalized Elements & Transparency Disclaimer -->
+        <div class="attrib-box" style="border-left: 3px solid var(--amber-solar);">
+          <h4 style="color:var(--amber-solar); font-size:16px;">4. Transparency: Fictional & Conceptual Elements</h4>
+          <ul class="attrib-list">
+            <li><strong>Flight Plan Disclaimer:</strong> This 7-day surface expedition schedule is an illustrative
+              educational simulation based on NASA architecture trade-studies, <em>not an official NASA day-by-day
+                flight plan</em>.</li>
+            <li><strong>Fictional Crew Personas:</strong> Dr. Leo Kim, Elena Rostova, Marcus Vance, and Sarah Chen are
+              fictional role-playing characters created to teach trade-offs and role specialization, not real NASA
+              astronauts.</li>
+            <li><strong>Conceptual Tech Upgrade:</strong> The "Superconducting Deflector" is a fictional gameplay
+              upgrade inspired by early-stage conceptual research funded by NASA NIAC (Active Radiation Shielding
+              Utilizing High Temperature Superconducting Magnets, NASA Johnson Space Center). It does not represent
+              flight-certified hardware.</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- External JavaScript -->
-<script src="./app.js"></script>
+  <!-- Event Toast Notifications Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- External JavaScript -->
+  <script src="./app.js"></script>
 </body>
+
 </html>
