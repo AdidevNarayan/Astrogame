@@ -20,3 +20,8 @@
   from = "/Astronaut%20Game"
   to = "/"
   status = 301
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
