@@ -1,0 +1,22 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/Astronaut Game/*"
+  to = "/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/Astronaut%20Game/*"
+  to = "/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/Astronaut Game"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/Astronaut%20Game"
+  to = "/"
+  status = 301
