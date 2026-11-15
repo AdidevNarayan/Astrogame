@@ -1,0 +1,2419 @@
+/* ====================================================================
+   MOON BASE KEEPER — OUTPOST SURVIVAL RESTYLED THEME
+   Inspired by Outpost (https://leojalo.itch.io/outpost)
+   3-Column Layout, Dark Theme, Rounded Corners, Thin Borders, Soft Shadows
+   WCAG: Buttons >= 44px tall, All body text >= 16px
+   ==================================================================== */
+
+:root {
+  /* Outpost Dark Palette (Forest & Slate Tones) */
+  --bg-page: #0b110e;
+  --bg-topbar: #121c17;
+  --bg-panel: #142019;
+  --bg-card: #1a2921;
+  --bg-card-hover: #22372c;
+  --bg-card-active: #284235;
+  --bg-chip: #192720;
+  --bg-input: #121d17;
+
+  /* Thin Borders */
+  --border-subtle: #24382d;
+  --border-bright: #324c3d;
+  --border-highlight: #4ade80;
+
+  /* Accent Tones */
+  --green-outpost: #22c55e;
+  --green-glow: rgba(34, 197, 94, 0.25);
+  --amber-solar: #f59e0b;
+  --amber-glow: rgba(245, 158, 11, 0.25);
+  --cyan-air: #06b6d4;
+  --cyan-glow: rgba(6, 182, 212, 0.25);
+  --red-health: #ef4444;
+  --red-glow: rgba(239, 68, 68, 0.25);
+  --purple-science: #a855f7;
+  --purple-glow: rgba(168, 85, 247, 0.25);
+  --gold-supplies: #eab308;
+
+  /* Typography Colors */
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --text-bright: #ffffff;
+
+  /* Typography Fonts */
+  --font-display: 'Orbitron', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Chakra Petch', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-ui: 'Inter', 'Rajdhani', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Share Tech Mono', ui-monospace, monospace;
+
+  /* Soft Shadows */
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.6);
+
+  /* Rounded Corners */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 9999px;
+}
+
+/* ====================================================================
+   GLOBAL RESETS & ACCESSIBILITY CONSTRAINTS
+   ==================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  font-size: 16px; /* Base body text: minimum 16px */
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  padding: 12px 14px;
+  display: flex;
+  justify-content: center;
+  background-image: 
+    radial-gradient(1px 1px at 30px 40px, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1.5px 1.5px at 160px 180px, rgba(74,222,128,0.25), transparent),
+    radial-gradient(1px 1px at 320px 90px, rgba(255,255,255,0.3), transparent),
+    radial-gradient(1.5px 1.5px at 510px 240px, rgba(6,182,212,0.2), transparent),
+    linear-gradient(to bottom, #090e0c, #0b110e);
+  background-repeat: repeat;
+  background-size: 600px 400px, auto;
+}
+
+/* All buttons: at least 44px tall */
+button, 
+.btn-speed, 
+.btn-top-action, 
+.build-card-btn, 
+.btn-end-day, 
+.btn-orbit-action, 
+.btn-skip-tut, 
+.btn-emergency-override,
+.custom-select {
+  min-height: 44px;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+/* All body text, inputs, labels: at least 16px */
+p, span, label, div, select, input, summary, strong, b {
+  font-size: 16px;
+}
+
+/* Screen reader only utility */
+.sr-only, .chip-sub-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Universal Hide Utility */
+.hid {
+  display: none !important;
+}
+
+/* App Wrapper */
+.app-wrapper {
+  max-width: 1540px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Responsive layout for mobile */
+@media (max-width: 768px) {
+  /* Stack the three‑column layout vertically */
+  .game-layout {
+    flex-direction: column !important;
+  }
+  /* Panels take full width */
+  .panel-build,
+  .panel-crew-goals,
+  .panel-map {
+    width: 100% !important;
+    max-width: none !important;
+  }
+  /* Reorder panels for better mobile flow */
+  .panel-map { order: 1; flex: 1 1 auto; }
+  .panel-build { order: 2; max-height: 60vh; overflow-y: auto; }
+  .panel-crew-goals { order: 3; max-height: 60vh; overflow-y: auto; }
+  /* Allow top bar to wrap and shrink */
+  .top-bar {
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 8px;
+  }
+  /* Make resource chips scroll horizontally if needed */
+  .top-bar-resources {
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+  /* Make canvas responsive – fill width, keep aspect ratio */
+  .canvas-wrapper {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16/9; /* fallback ratio */
+  }
+  canvas#moonCanvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+  /* Increase touch target size for side panel buttons */
+  .btn-top-action,
+  .btn-reset-view,
+  .custom-select,
+  .btn-end-day,
+  .btn-orbit-action,
+  .btn-skip-tut,
+  .btn-emergency-override {
+    min-height: 48px;
+    font-size: 1rem;
+  }
+}
+
+  /* Stack the three‑column layout vertically */
+  .game-layout {
+    flex-direction: column !important;
+  }
+  /* Panels take full width */
+  .panel-build,
+  .panel-crew-goals,
+  .panel-map {
+    width: 100% !important;
+    max-width: none !important;
+  }
+  /* Allow top bar to wrap and shrink */
+  .top-bar {
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 8px;
+  }
+  /* Make resource chips scroll horizontally if needed */
+  .top-bar-resources {
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+  /* Make canvas responsive – fill width, keep aspect ratio */
+  .canvas-wrapper {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16/9; /* fallback ratio */
+  }
+  canvas#moonCanvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+  /* Increase touch target size for side panel buttons */
+  .btn-top-action,
+  .btn-reset-view,
+  .custom-select,
+  .btn-end-day,
+  .btn-orbit-action,
+  .btn-skip-tut,
+  .btn-emergency-override {
+    min-height: 48px;
+    font-size: 1rem;
+  }
+}
+
+.app-wrapper {
+  max-width: 1540px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ====================================================================
+   TOP BAR (Outpost Style Header)
+   Title, Day Badge, Resource Chips, Speed Controls & Quick Tools
+   ==================================================================== */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--bg-topbar);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 4px 12px;
+  box-shadow: var(--shadow-md);
+  flex-wrap: nowrap;
+  min-height: 44px;
+}
+
+/* Brand / Title */
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.brand-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-icon {
+  width: 26px;
+  height: 26px;
+  color: var(--green-outpost);
+  filter: drop-shadow(0 0 6px var(--green-glow));
+}
+
+.brand-text-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  color: var(--text-bright);
+}
+
+.badge-artemis {
+  background: var(--bg-card);
+  border: 1px solid var(--border-bright);
+  color: var(--green-outpost);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.5px;
+}
+
+/* Compact Resource Chips */
+.top-bar-resources {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  flex: 1;
+  overflow-x: auto;
+}
+
+.res-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 10px;
+  min-height: 36px;
+  background: var(--bg-chip);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-main);
+  transition: all 0.2s ease;
+  user-select: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.res-chip:hover {
+  border-color: var(--border-bright);
+  background: var(--bg-card-hover);
+}
+
+.chip-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.chip-label {
+  font-size: 16px;
+  color: var(--text-muted);
+  font-weight: 500;
+  display: none; /* Hidden on desktop for compact bar; icon + value is enough */
+}
+
+.chip-val {
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  color: var(--text-bright);
+}
+
+/* Specific Resource Chip Color Flavors (Outpost style) */
+.chip-day {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+.chip-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--green-outpost);
+  box-shadow: 0 0 8px var(--green-outpost);
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+.chip-power {
+  border-color: rgba(245, 158, 11, 0.35);
+}
+.chip-power .chip-icon {
+  color: var(--amber-solar);
+}
+
+.chip-air {
+  border-color: rgba(6, 182, 212, 0.35);
+}
+.chip-air .chip-icon {
+  color: var(--cyan-air);
+}
+
+.chip-health {
+  border-color: rgba(239, 68, 68, 0.35);
+}
+.chip-health .chip-icon {
+  color: var(--red-health);
+}
+
+.chip-supplies {
+  border-color: rgba(234, 179, 8, 0.35);
+}
+.chip-supplies .chip-icon {
+  color: var(--gold-supplies);
+}
+
+.chip-science {
+  border-color: rgba(168, 85, 247, 0.35);
+}
+.chip-science .chip-icon {
+  color: var(--purple-science);
+}
+
+/* Top Bar Right: Action Buttons */
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+
+/* Speed Controls: Pause, 1x, 2x */
+.speed-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 3px 6px;
+}
+
+.speed-label {
+  font-size: 16px;
+  color: var(--text-muted);
+  font-weight: 600;
+  padding: 0 6px;
+}
+
+.btn-speed {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  padding: 4px 10px;
+  min-height: 44px;
+  min-width: 44px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-speed:hover {
+  color: var(--text-bright);
+  background: var(--bg-card-hover);
+}
+
+.btn-speed.active {
+  background: #244433;
+  color: #ffffff;
+  border-color: var(--border-highlight);
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+}
+
+/* Action Buttons (Tech Tree, NASA Data, SFX) */
+.top-actions-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-top-action {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  padding: 4px 10px;
+  min-height: 36px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.btn-top-action:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-bright);
+  color: var(--text-bright);
+}
+
+/* Hide mobile nav pills on desktop */
+.nav-mobile-pill {
+  display: none;
+}
+
+/* ====================================================================
+   SPACE WEATHER WARNING CARD BANNER (Outpost Raid Alert Style)
+   Shows threat using flare data, 1-line prep hint, progress bar, & DONKI source
+   ==================================================================== */
+.weather-alert-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.weather-warning-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+  min-height: 52px;
+}
+
+/* 1. Amber Warning Card (Incoming storm / threat approaching) */
+.weather-warning-card.warning-amber {
+  background: linear-gradient(135deg, rgba(38, 26, 8, 0.95), rgba(20, 31, 24, 0.95));
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45), 0 0 14px rgba(245, 158, 11, 0.15);
+}
+
+.warning-amber .warning-tag {
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  color: var(--amber-solar);
+}
+
+.warning-amber .warning-headline {
+  color: #fef3c7;
+}
+
+.warning-amber .progress-fill {
+  background: linear-gradient(90deg, #d97706, #f59e0b);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.warning-amber .progress-val {
+  color: var(--amber-solar);
+}
+
+/* 2. Red Storm Card (Active storm impacting base) */
+.weather-warning-card.storm-red {
+  background: linear-gradient(135deg, rgba(48, 13, 18, 0.95), rgba(24, 16, 20, 0.95));
+  border: 1px solid rgba(239, 68, 68, 0.7);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.55), 0 0 18px rgba(239, 68, 68, 0.35);
+  animation: storm-card-pulse 2s infinite ease-in-out;
+}
+
+@keyframes storm-card-pulse {
+  0%, 100% { 
+    border-color: rgba(239, 68, 68, 0.6); 
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 12px rgba(239, 68, 68, 0.25); 
+  }
+  50% { 
+    border-color: rgba(239, 68, 68, 1); 
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 22px rgba(239, 68, 68, 0.5); 
+  }
+}
+
+.storm-red .warning-tag {
+  background: rgba(239, 68, 68, 0.25);
+  border: 1px solid rgba(239, 68, 68, 0.65);
+  color: #ff8080;
+}
+
+.storm-red .warning-headline {
+  color: #ffe4e6;
+}
+
+.storm-red .progress-fill {
+  background: linear-gradient(90deg, #dc2626, #ef4444);
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.65);
+}
+
+.storm-red .progress-val {
+  color: #ff8080;
+}
+
+/* Card Left Section: Header, Threat Message, Hint */
+.warning-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+
+.warning-header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.warning-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.donki-source-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: 16px;
+  font-family: var(--font-mono);
+}
+
+.warning-headline {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0.3px;
+}
+
+.warning-hint {
+  font-size: 16px;
+  color: #cbd5e1;
+  line-height: 1.4;
+}
+
+/* Card Right Section: Outpost Progress Bar */
+.warning-card-right {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 260px;
+  flex-shrink: 0;
+}
+
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+}
+
+.progress-label {
+  color: var(--text-muted);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.progress-val {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.progress-track {
+  width: 100%;
+  height: 14px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid var(--border-subtle);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.5s ease-in-out;
+}
+
+/* Space Weather Banner (Legacy fallback styling) */
+.donki-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-main);
+  box-shadow: var(--shadow-sm);
+  min-height: 44px;
+}
+
+.donki-indicator.storm {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: var(--red-health);
+  color: #ff8080;
+  box-shadow: 0 0 14px var(--red-glow);
+  animation: storm-pulse 2s infinite alternate;
+}
+
+@keyframes storm-pulse {
+  from { border-color: rgba(239, 68, 68, 0.5); }
+  to { border-color: rgba(239, 68, 68, 1); }
+}
+
+/* Tutorial Banner */
+.tutorial-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  border-radius: var(--radius-md);
+  padding: 6px 14px;
+  flex: 1;
+  min-height: 44px;
+  box-shadow: var(--shadow-sm);
+}
+
+.tutorial-text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 16px;
+  color: var(--text-bright);
+}
+
+.tutorial-step-tag {
+  background: var(--cyan-air);
+  color: #000;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 16px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.btn-skip-tut {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  padding: 4px 12px;
+  min-height: 44px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-skip-tut:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-bright);
+}
+
+/* ====================================================================
+   THREE-COLUMN DESKTOP LAYOUT
+   Left: Build Menu (290px)
+   Centre: Large Map Area (1fr, fills remaining width & height)
+   Right: Crew & Mission Goals (340px)
+   ==================================================================== */
+.game-layout {
+  display: grid;
+  grid-template-columns: 290px 1fr 340px;
+  gap: 14px;
+  align-items: stretch;
+  width: 100%;
+}
+
+/* Common Panel Styling */
+.panel-build,
+.panel-map,
+.panel-crew-goals {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.panel-header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--green-outpost);
+  flex-shrink: 0;
+}
+
+.panel-header h2 {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text-bright);
+}
+
+.panel-subtitle {
+  font-size: 16px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+/* ====================================================================
+   1. LEFT PANEL: BUILD MENU
+   ==================================================================== */
+.panel-build {
+  display: flex;
+  flex-direction: column;
+}
+
+.dock-instruction {
+  padding: 10px 14px;
+  font-size: 16px;
+  color: var(--text-muted);
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--border-subtle);
+  line-height: 1.4;
+}
+
+.build-slots-container {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Headings grouping the building cards */
+.build-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.build-group-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.build-group-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Building Card Button */
+.build-card-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  min-height: 52px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  user-select: none;
+}
+
+.build-card-btn:hover:not(:disabled) {
+  background: var(--bg-card-hover);
+  border-color: var(--border-bright);
+  transform: translateY(-1px);
+}
+
+.build-card-btn.active {
+  background: var(--bg-card-active);
+  border-color: var(--border-highlight);
+  box-shadow: 0 0 12px rgba(74, 222, 128, 0.3);
+}
+
+.build-card-btn:disabled,
+.build-card-btn.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+.build-card-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.build-card-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--green-outpost);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.build-card-thumb {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.legend-thumb {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.build-card-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.build-card-name {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-bright);
+}
+
+.build-card-sub {
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1.25;
+}
+
+.build-card-cost {
+  flex-shrink: 0;
+}
+
+.build-cost-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-subtle);
+  color: var(--gold-supplies);
+}
+
+.build-cost-tag.cost-locked {
+  color: var(--text-dim);
+  border-color: transparent;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Build Footer with End Day Button */
+.build-footer {
+  padding: 12px 14px;
+  border-top: 1px solid var(--border-subtle);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.btn-end-day {
+  width: 100%;
+  min-height: 48px;
+  background: linear-gradient(135deg, #15803d, #16a34a);
+  border: 1px solid #22c55e;
+  border-radius: var(--radius-md);
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-end-day:hover {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  box-shadow: 0 6px 18px rgba(34, 197, 94, 0.45);
+  transform: translateY(-1px);
+}
+
+.btn-end-day:active {
+  transform: translateY(0);
+}
+
+/* ====================================================================
+   2. CENTRE PANEL: LARGE MAP AREA
+   ==================================================================== */
+.panel-map {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 520px;
+}
+
+.map-header {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.map-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-reset-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-reset-view:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--cyan-air);
+  color: var(--cyan-air);
+}
+
+.map-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cyan-air);
+  letter-spacing: 0.5px;
+}
+
+.map-pin-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--cyan-air);
+}
+
+.canvas-overlay-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  color: var(--green-outpost);
+  background: rgba(34, 197, 94, 0.1);
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+/* Canvas Viewport */
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 960 / 600;
+  min-height: 420px;
+  max-height: 72vh;
+  background: #050907;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.canvas-wrapper.is-panning {
+  cursor: grabbing;
+}
+
+.canvas-wrapper.is-build-mode {
+  cursor: crosshair;
+}
+
+#moonCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+/* Map Plain-Language Tooltip */
+.map-tooltip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 100;
+  background: rgba(14, 24, 19, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border-highlight);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  max-width: 250px;
+  color: var(--text-bright);
+  font-family: var(--font-ui);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.65);
+  transform: translate(12px, 12px);
+  transition: opacity 0.12s ease;
+}
+
+.map-tooltip.hid {
+  display: none;
+  opacity: 0;
+}
+
+.map-tooltip-title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--green-outpost);
+  margin-bottom: 2px;
+}
+
+.map-tooltip-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+/* Canvas Legend Strip */
+.canvas-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 8px 14px;
+  background: rgba(0, 0, 0, 0.25);
+  border-top: 1px solid var(--border-subtle);
+  font-size: 16px;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+/* Debrief / Mission End Card */
+.debrief-card {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.debrief-card.hid {
+  display: none !important;
+}
+
+.debrief-score-text {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--gold-supplies);
+  letter-spacing: 1px;
+}
+
+.debrief-stats-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  font-size: 16px;
+}
+
+/* ====================================================================
+   3. RIGHT PANEL: CREW & MISSION GOALS
+   ==================================================================== */
+.panel-crew-goals {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* Selected Structure Inspection Card */
+.inspect-card-section {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  animation: inspect-appear 200ms ease-out;
+}
+
+@keyframes inspect-appear {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.inspect-card-section.hid {
+  display: none !important;
+}
+
+.btn-close-inspect {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 18px;
+  cursor: pointer;
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s, background 0.15s;
+}
+
+.btn-close-inspect:hover {
+  color: var(--text-bright);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.inspect-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inspect-main-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.inspect-thumb-wrap {
+  width: 56px;
+  height: 56px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.inspect-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.inspect-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.inspect-title {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 4px;
+}
+
+.inspect-status-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.inspect-status-pill.status-powered {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.inspect-status-pill.status-unpowered {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.inspect-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.inspect-meta-box {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inspect-stat-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.inspect-stat-row strong {
+  color: var(--text-bright);
+}
+
+.inspect-actions {
+  margin-top: 4px;
+}
+
+.btn-dismantle {
+  width: 100%;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 16px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: var(--radius-sm);
+  color: #f87171;
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.btn-dismantle:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #ef4444;
+  color: #ffffff;
+}
+
+.btn-dismantle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.panel-section {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.crew-badge-count {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: var(--green-outpost);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.crew-cards-list {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Astronaut Card */
+.crew-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.crew-card:hover {
+  border-color: var(--border-bright);
+  background: var(--bg-card-hover);
+  transform: translateY(-1px);
+}
+
+.crew-card.selected {
+  border-color: var(--border-highlight);
+  background: #182b21;
+  box-shadow: 0 0 16px rgba(74, 222, 128, 0.28), 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.crew-card.selected::before {
+  content: "ACTIVE";
+  position: absolute;
+  top: -8px;
+  right: 14px;
+  background: var(--green-outpost);
+  color: #000000;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 900;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.8px;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+}
+
+.crew-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.crew-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.crew-avatar-wrap {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.avatar-science {
+  border: 2px solid var(--amber-solar);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.35);
+}
+
+.avatar-engineering {
+  border: 2px solid var(--green-outpost);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.35);
+}
+
+.avatar-orbit {
+  border: 2px solid var(--cyan-air);
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.35);
+}
+
+.avatar-commander {
+  border: 2px solid var(--purple-science);
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.35);
+}
+
+.crew-avatar {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.crew-name {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-bright);
+}
+
+.crew-role-sub {
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.crew-location-badge {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.crew-location-badge.surface {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--amber-solar);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.crew-location-badge.orbit {
+  background: rgba(6, 182, 212, 0.2);
+  color: var(--cyan-air);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+}
+
+.crew-location-badge.commander {
+  background: rgba(168, 85, 247, 0.2);
+  color: var(--purple-science);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.crew-job-select-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+
+.crew-select-label {
+  font-size: 16px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Custom Select Dropdowns */
+.custom-select {
+  width: 100%;
+  min-height: 44px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-sm);
+  color: var(--text-bright);
+  padding: 8px 12px;
+  font-size: 16px;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.custom-select:focus {
+  border-color: var(--border-highlight);
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.35);
+}
+
+/* Commander Duty Button */
+.commander-duty-btn {
+  min-height: 44px;
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.45);
+  border-radius: var(--radius-sm);
+  color: #e9d5ff;
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  padding: 6px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: default;
+}
+
+/* Plain-Words Kid-Friendly Job Tooltip */
+.crew-tooltip {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: all 0.2s ease;
+}
+
+.crew-card.selected .crew-tooltip {
+  background: rgba(20, 35, 28, 0.85);
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+.tooltip-badge {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: #fde047;
+  letter-spacing: 0.5px;
+}
+
+.tooltip-text {
+  font-size: 16px;
+  color: #e2e8f0;
+  line-height: 1.4;
+}
+
+.crew-desc {
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+/* Telemetry Scan Button */
+.btn-orbit-action {
+  min-height: 44px;
+  background: var(--cyan-air);
+  border: 1px solid #38bdf8;
+  border-radius: var(--radius-sm);
+  color: #000000;
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 6px 14px;
+  box-shadow: 0 2px 8px var(--cyan-glow);
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+
+.btn-orbit-action:hover:not(:disabled) {
+  background: #38bdf8;
+  box-shadow: 0 4px 12px var(--cyan-glow);
+}
+
+.btn-orbit-action:disabled {
+  background: #2a3c3b;
+  color: #889998;
+  border-color: transparent;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* ====================================================================
+   COLLAPSIBLE SECTIONS: MISSION GOALS, MILESTONES, NASA DATA
+   ==================================================================== */
+.goals-collapsible-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.collapsible-section {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.collapsible-section[open] {
+  border-color: var(--border-bright);
+}
+
+.collapsible-summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  min-height: 44px;
+  background: rgba(0, 0, 0, 0.15);
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-bright);
+  user-select: none;
+  transition: all 0.2s;
+}
+
+.collapsible-summary::-webkit-details-marker {
+  display: none;
+}
+
+.collapsible-summary:hover {
+  background: var(--bg-card-hover);
+}
+
+.summary-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary-left i {
+  color: var(--green-outpost);
+}
+
+.summary-toggle-icon {
+  font-size: 18px;
+  color: var(--text-muted);
+  transition: transform 0.2s;
+}
+
+.collapsible-content {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid var(--border-subtle);
+  background: rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+}
+
+/* Goal Items with Outpost Progress Bars */
+.goal-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.goal-item.goal-completed {
+  border-color: rgba(34, 197, 94, 0.65);
+  background: rgba(34, 197, 94, 0.08);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);
+}
+
+.goal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.goal-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.goal-progress-badge {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+}
+
+.goal-item.goal-completed .goal-progress-badge {
+  color: #4ade80;
+  border-color: rgba(34, 197, 94, 0.4);
+  background: rgba(34, 197, 94, 0.18);
+}
+
+.goal-progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.goal-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #15803d, #22c55e);
+  border-radius: 9999px;
+  transition: width 0.35s ease;
+}
+
+.goal-icon {
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.goal-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-bright);
+  display: block;
+}
+
+.goal-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+/* Milestone Items */
+.milestone-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.milestone-bullet {
+  color: var(--green-outpost);
+  font-weight: 800;
+}
+
+/* ====================================================================
+   MODALS (Dark Theme with Rounded Corners, Thin Borders & Soft Shadows)
+   ==================================================================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 10, 8, 0.82);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 2000;
+}
+
+.modal-backdrop.show {
+  display: flex;
+}
+
+.modal-window {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.modal-header-bar h2 {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-bright);
+}
+
+.modal-badge-day {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--amber-solar);
+}
+
+.btn-close-modal {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 26px;
+  cursor: pointer;
+  line-height: 1;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+}
+
+.btn-close-modal:hover {
+  color: var(--text-bright);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.modal-body {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-size: 16px;
+}
+
+.modal-content {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  font-size: 16px;
+}
+
+/* Choice Cards inside Dilemma Popup */
+.dilemma-card-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 44px;
+}
+
+.dilemma-card-box:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-bright);
+}
+
+.dilemma-card-box.selected {
+  border-color: var(--border-highlight);
+  background: var(--bg-card-active);
+  box-shadow: 0 0 12px rgba(74, 222, 128, 0.3);
+}
+
+/* Emergency Callout */
+.emergency-callout {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid var(--red-health);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.emergency-callout.hid {
+  display: none !important;
+}
+
+.btn-emergency-override {
+  background: var(--red-health);
+  border: 1px solid #f87171;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-weight: 800;
+  min-height: 44px;
+  padding: 6px 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Report Log Box */
+.report-log {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.nasa-fact-card {
+  background: rgba(168, 85, 247, 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Attribution Modal Content Boxes */
+.attrib-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.attrib-pill {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--amber-solar);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.attrib-list {
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.goal-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 16px;
+}
+
+/* ====================================================================
+   NARROW SCREENS / RESPONSIVE LAYOUT
+   "On narrow screens, stack the panels with the map first and
+   the build menu as a bottom bar."
+   ==================================================================== */
+@media (max-width: 1024px) {
+  body {
+    padding: 8px 10px;
+    padding-bottom: 110px; /* Space for the bottom build bar */
+  }
+
+  .nav-mobile-pill {
+    display: inline-flex;
+  }
+
+  .top-bar {
+    padding: 6px 10px;
+    flex-wrap: wrap;
+  }
+
+  /* Stack panels with flex order */
+  .game-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* 1. Map First */
+  .panel-map {
+    order: 1;
+    width: 100%;
+  }
+
+  /* 2. Crew & Mission Goals */
+  .panel-crew-goals {
+    order: 2;
+    width: 100%;
+  }
+
+  /* 3. Build Menu as Bottom Bar */
+  .panel-build {
+    order: 3;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border-bright);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.7);
+    padding: 8px 12px;
+    max-height: 48vh;
+    overflow-y: auto;
+  }
+
+  .panel-build .panel-header {
+    display: none; /* Keep clean in bottom bar */
+  }
+
+  .panel-build .dock-instruction {
+    padding: 4px 6px;
+    font-size: 16px;
+    border: none;
+    background: transparent;
+  }
+
+  .build-slots-container {
+    padding: 4px 0 8px;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 10px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .build-group {
+    flex-shrink: 0;
+    min-width: 260px;
+  }
+
+  .build-group-cards {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .build-card-btn {
+    min-width: 170px;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+  }
+
+  .build-footer {
+    padding: 6px 0 0;
+    border: none;
+    background: transparent;
+  }
+}
+
+@media (max-width: 860px) {
+  .weather-warning-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .warning-card-right {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .top-bar {
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: stretch;
+    padding: 6px 10px;
+  }
+
+  .top-bar-left,
+  .top-bar-resources,
+  .top-bar-right {
+    justify-content: center;
+  }
+
+  .top-bar-resources {
+    flex-wrap: wrap;
+  }
+
+  .chip-label {
+    display: inline; /* Show labels on mobile since there's vertical space */
+  }
+
+  .res-chip {
+    min-height: 44px;
+    padding: 4px 12px;
+  }
+
+  .btn-top-action {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  .sub-alert-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* ====================================================================
+   INTERACTIVE FEEDBACK: FLOATING NUMBERS, CHIP FLASH, TOASTS
+   Animations strictly under 400ms with prefers-reduced-motion support
+   ==================================================================== */
+
+/* 1. Floating Numbers Canvas Overlay */
+.floating-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.floating-stat {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 8px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+  animation: float-up-fade 360ms cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+  white-space: nowrap;
+}
+
+@keyframes float-up-fade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.85);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -6px) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -24px) scale(1);
+  }
+}
+
+.floating-stat.stat-power {
+  color: #fbbf24;
+}
+
+.floating-stat.stat-air {
+  color: #38bdf8;
+}
+
+.floating-stat.stat-health {
+  color: #f87171;
+}
+
+.floating-stat.stat-health-up {
+  color: #4ade80;
+}
+
+.floating-stat.stat-science {
+  color: #c084fc;
+}
+
+.floating-stat.stat-supplies {
+  color: #facc15;
+}
+
+.floating-stat.stat-hab {
+  color: #e2e8f0;
+}
+
+/* 2. Stat Chip Flash Animations (Duration: 320ms < 400ms) */
+.res-chip.stat-flash-inc {
+  animation: chip-flash-green 320ms ease-out;
+}
+
+.res-chip.stat-flash-dec {
+  animation: chip-flash-red 320ms ease-out;
+}
+
+@keyframes chip-flash-green {
+  0% { transform: scale(1); }
+  50% { 
+    transform: scale(1.08); 
+    background-color: rgba(34, 197, 94, 0.35); 
+    border-color: #4ade80; 
+    box-shadow: 0 0 12px rgba(74, 222, 128, 0.5); 
+  }
+  100% { transform: scale(1); }
+}
+
+@keyframes chip-flash-red {
+  0% { transform: scale(1); }
+  50% { 
+    transform: scale(1.08); 
+    background-color: rgba(239, 68, 68, 0.35); 
+    border-color: #f87171; 
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.5); 
+  }
+  100% { transform: scale(1); }
+}
+
+/* 3. Toast Notifications (Entrance: 250ms < 400ms) */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  max-width: 380px;
+}
+
+.toast-card {
+  pointer-events: auto;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  color: var(--text-bright);
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow-lg);
+  animation: toast-in 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.toast-card.toast-out {
+  opacity: 0;
+  transform: translateY(10px) scale(0.95);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.toast-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.toast-card.toast-success {
+  border-color: rgba(34, 197, 94, 0.55);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), 0 0 12px rgba(34, 197, 94, 0.25);
+}
+
+.toast-card.toast-warning {
+  border-color: rgba(245, 158, 11, 0.6);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), 0 0 12px rgba(245, 158, 11, 0.25);
+}
+
+.toast-card.toast-alert {
+  border-color: rgba(239, 68, 68, 0.75);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), 0 0 14px rgba(239, 68, 68, 0.35);
+}
+
+.toast-card.toast-info {
+  border-color: rgba(6, 182, 212, 0.55);
+}
+
+/* 4. Accessibility: Reduced Motion (Disables animations / transitions) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .floating-stat {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+  .res-chip.stat-flash-inc,
+  .res-chip.stat-flash-dec {
+    animation: none !important;
+  }
+  .toast-card {
+    animation: none !important;
+    transition: none !important;
+  }
+  .goal-progress-fill {
+    transition: none !important;
+  }
+}
